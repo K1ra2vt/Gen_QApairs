@@ -9,9 +9,9 @@ import os
 import re
 import numpy as np
 
-folder_path = '/Users/k1ra/Documents/data_docs/低碳政策/pdf/'
-WENXIN_APP_Key = "8O8u7ptN1XJkfdGXMvODRv1o"
-WENXIN_APP_SECRET = "DQVmqx4hqO1nBFfF0oLGyhX51tIcUC4x"
+folder_path = 'your_folder_path'
+WENXIN_APP_Key = "your_key"
+WENXIN_APP_SECRET = "your_secret"
 model="ernie-speed-128k"
 
 class bookreader:
@@ -25,14 +25,14 @@ class bookreader:
         pdf_files = []
         for filename in os.listdir(folder_path):
             if filename.endswith('.pdf'):
-            # 将PDF文件名称和数字添加到列表中
+            # 将PDF文件名称添加到列表中
                 pdf_files.append(filename)
         for pdf_file in pdf_files:
             loader = PyMuPDFLoader(folder_path+pdf_file)
             pdf_pages = loader.load()
             all_page_contents = [doc.page_content for doc in pdf_pages]
         return all_page_contents[self.startpage : self.endpage+1]
-
+# 如果需要正则来进行修改
 # pdf_page.page_content = re.sub(r'\r?\n', '', pdf_page.page_content)
 # pdf_page.page_content = re.sub(r'[.\s]', '', pdf_page.page_content)
 
@@ -55,7 +55,7 @@ class chain:
         )
         QA_PAIRS_SYSTEM_PROMPT = """  
         <Context></Context> 标记中是一段文本，学习和分析它，并整理学习成果：  
-        - 提出问题并给出每个问题的答案,提出的问题类型应为企业环保低碳问题。
+        - 提出问题并给出每个问题的答案,提出的问题类型应为xxx问题。
         - 答案需详细完整，尽可能保留原文描述，答案应该给出原因分析和解决措施，你可以根据实际情况自行判断添加对应处理方法。
         - 答案的字数应该尽量的多。  
         - 对文本提出至少1个问题。
@@ -83,8 +83,8 @@ class chain:
                 f.write(str(chain.invoke({'text': page_text})))
                 f.write('\n')
 
-wait2read = bookreader('/Users/k1ra/Documents/data_docs/低碳政策/pdf/', 5, 50,)
+wait2read = bookreader('you_folder_path', startpage, endpage,)
 all_page_contents = wait2read.ReadThisBook()
 
-ESGchain = chain("8O8u7ptN1XJkfdGXMvODRv1o","DQVmqx4hqO1nBFfF0oLGyhX51tIcUC4x", 0.8, "ernie-speed-128k", all_page_contents)
+ESGchain = chain("key","secret", 0.8, "ernie-speed-128k", all_page_contents)
 ESGchain.working()
